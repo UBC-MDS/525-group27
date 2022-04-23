@@ -42,19 +42,22 @@ def return_prediction(data):
     return model.predict(data_df)
 
 # 3. Set up home page using basic html
-@app.route("/")
+@app.route('/')
 def index():
     # feel free to customize this if you like
-    return """
+    return '''
     <h1>Welcome to our rain prediction service</h1>
     To use this service, make a JSON post request to the /predict url with 25 climate model outputs.
-    """
+    '''
 
 # 4. define a new route which will accept POST requests and return model predictions
 @app.route('/predict', methods=['POST'])
 def rainfall_prediction():
     content = request.json  # this extracts the JSON content we sent
+    # if content is a dictionary contain data, then extract the data value list
+    if isinstance(content, dict):
+        content = content['data']
     prediction = return_prediction(content)[0]
-    results = {"Input": content,
-               "Output": f"The predicted rainfall is {prediction} mm."}  
+    results = {'Input': content,
+               'Output': f'The predicted rainfall is {prediction} mm.'}  
     return jsonify(results)
